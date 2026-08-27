@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Code Echo mark">
+  <rect width="64" height="64" rx="10" fill="#F4EBD8"/>
+  <path d="M20 16H12v32h8M44 16h8v32h-8" fill="none" stroke="#211D19" stroke-width="5" stroke-linecap="square"/>
+  <path d="M23 32h18" stroke="#155C73" stroke-width="7" stroke-linecap="square"/>
+  <path d="M28 24h8v16h-8z" fill="#F4C542"/>
+</svg>

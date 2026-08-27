@@ -40,6 +40,21 @@ test('390px layout keeps primary actions on screen', async ({ page }) => {
   expect(scan.violations.filter((item) => item.impact === 'serious' || item.impact === 'critical')).toEqual([]);
 });
 
+test('site load uses the local favicon and responsive hero without console errors', async ({ page }) => {
+  const errors: string[] = [];
+  const responses: string[] = [];
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()); });
+  page.on('response', (response) => responses.push(new URL(response.url()).pathname));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', '/favicon.svg');
+  await expect(page.locator('.hero-art img')).toHaveAttribute('sizes', /max-width: 620px/);
+  expect((await page.request.get('/favicon.svg')).status()).toBe(200);
+  await expect.poll(() => responses.some((path) => /\/assets\/hero-risograph-(480|768)\.avif$/.test(path))).toBe(true);
+  expect(responses).not.toContain('/favicon.ico');
+  expect(errors).toEqual([]);
+});
+
 test('dark treatment keeps serious accessibility checks clear', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('code-echo-theme', 'dark'));

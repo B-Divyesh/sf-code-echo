@@ -6,8 +6,9 @@
     <meta name="description" content="Code Echo reads selected code one syntax chunk at a time, with adjustable punctuation and identifier pronunciation." />
     <meta name="theme-color" content="#f4ebd8" />
     <title>Code Echo — keep your place in unfamiliar code</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="preload" href="/assets/hero-risograph.avif" as="image" type="image/avif" fetchpriority="high" />
+    <link rel="preload" href="/assets/hero-risograph.avif" as="image" type="image/avif" imagesrcset="/assets/hero-risograph-480.avif 480w, /assets/hero-risograph-768.avif 768w, /assets/hero-risograph.avif 1200w" imagesizes="(max-width: 620px) calc(100vw - 28px), (max-width: 900px) min(700px, calc(100vw - 64px)), 50vw" fetchpriority="high" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body>
@@ -33,9 +34,9 @@
         </div>
         <figure class="hero-art ink-shadow">
           <picture>
-            <source type="image/avif" srcset="/assets/hero-risograph.avif" />
-            <source type="image/webp" srcset="/assets/hero-risograph.webp" />
-            <img src="/assets/hero-risograph.jpg" width="1200" height="800" fetchpriority="high" decoding="async" alt="Torn strips of punctuation converge into one yellow reading strip inside a dark frame." />
+            <source type="image/avif" srcset="/assets/hero-risograph-480.avif 480w, /assets/hero-risograph-768.avif 768w, /assets/hero-risograph.avif 1200w" sizes="(max-width: 620px) calc(100vw - 28px), (max-width: 900px) min(700px, calc(100vw - 64px)), 50vw" />
+            <source type="image/webp" srcset="/assets/hero-risograph-480.webp 480w, /assets/hero-risograph-768.webp 768w, /assets/hero-risograph.webp 1200w" sizes="(max-width: 620px) calc(100vw - 28px), (max-width: 900px) min(700px, calc(100vw - 64px)), 50vw" />
+            <img src="/assets/hero-risograph.jpg" srcset="/assets/hero-risograph-480.jpg 480w, /assets/hero-risograph-768.jpg 768w, /assets/hero-risograph.jpg 1200w" sizes="(max-width: 620px) calc(100vw - 28px), (max-width: 900px) min(700px, calc(100vw - 64px)), 50vw" width="1200" height="800" fetchpriority="high" decoding="async" alt="Torn strips of punctuation converge into one yellow reading strip inside a dark frame." />
           </picture>
           <figcaption><span aria-hidden="true">↳</span> One selection becomes one speakable piece at a time.</figcaption>
         </figure>

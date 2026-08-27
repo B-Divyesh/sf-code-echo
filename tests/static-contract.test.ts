@@ -24,6 +24,24 @@ describe('static accessibility contract', () => {
     }
   });
 
+  it('explicitly ships a local favicon and responsive hero candidates', async () => {
+    const [html, favicon] = await Promise.all([
+      readFile('site/index.html', 'utf8'),
+      readFile('site/public/favicon.svg', 'utf8')
+    ]);
+    expect(html).toMatch(/<link rel="icon" href="\/favicon\.svg" type="image\/svg\+xml"/);
+    expect(favicon).toContain('<svg');
+    expect(html).toContain('imagesrcset=');
+    expect(html).toContain('imagesizes=');
+    for (const format of ['avif', 'webp', 'jpg']) {
+      expect(html).toContain(`hero-risograph-480.${format}`);
+      expect(html).toContain(`hero-risograph-768.${format}`);
+    }
+    const heroImage = html.match(/<img\s[^>]+>/)?.[0] ?? '';
+    expect(heroImage).toContain('srcset=');
+    expect(heroImage).toContain('sizes=');
+  });
+
   it('ships privacy, terms, generated-art disclosure, and no CDN scripts', async () => {
     const html = await readFile('site/index.html', 'utf8');
     expect(html).toContain('/privacy/');
