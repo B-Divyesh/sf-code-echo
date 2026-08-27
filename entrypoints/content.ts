@@ -12,7 +12,7 @@ export default defineContentScript({
     const shadow = host.attachShadow({ mode: 'open' });
     document.documentElement.append(host);
 
-    shadow.innerHTML = `<style>${styles}</style><div id="echo-action" hidden><button type="button" aria-label="Read selected code"><span aria-hidden="true">◖</span> Hear selection</button></div><section id="echo-reader" role="dialog" aria-modal="false" aria-labelledby="echo-title" hidden><header><div><span class="eyebrow">CODE ECHO</span><h2 id="echo-title">Reading selection</h2></div><button class="icon-button" id="echo-close" aria-label="Close reader">×</button></header><div class="chunk-frame"><span id="echo-position">1 / 1</span><code id="echo-chunk" aria-live="polite"></code><span id="echo-spoken" class="spoken"></span></div><div class="controls"><button id="echo-prev" aria-label="Previous chunk">← <span>Previous</span></button><button id="echo-play">■ <span>Stop</span></button><button id="echo-next" aria-label="Next chunk"><span>Next</span> →</button></div><p id="echo-hint">R replay · ← → move · Esc close</p><p id="echo-status" class="status" role="status"></p></section><div id="echo-toast" role="status" aria-live="polite" hidden></div>`;
+    shadow.innerHTML = `<style>${styles}</style><div id="echo-action" hidden><button type="button" aria-label="Read selected code"><span aria-hidden="true">◖</span> Hear selection</button></div><section id="echo-reader" role="dialog" aria-modal="true" aria-labelledby="echo-title" hidden><header><div><span class="eyebrow">CODE ECHO</span><h2 id="echo-title">Reading selection</h2></div><button class="icon-button" id="echo-close" aria-label="Close reader">×</button></header><div class="chunk-frame"><span id="echo-position">1 / 1</span><code id="echo-chunk" aria-live="polite"></code><span id="echo-spoken" class="spoken"></span></div><div class="controls"><button id="echo-prev" aria-label="Previous chunk">← <span>Previous</span></button><button id="echo-play">■ <span>Stop</span></button><button id="echo-next" aria-label="Next chunk"><span>Next</span> →</button></div><p id="echo-hint">R replay · ← → move · Esc close</p><p id="echo-status" class="status" role="status"></p></section><div id="echo-toast" role="status" aria-live="polite" hidden></div>`;
 
     const action = shadow.querySelector<HTMLDivElement>('#echo-action')!;
     const reader = shadow.querySelector<HTMLElement>('#echo-reader')!;
@@ -22,6 +22,7 @@ export default defineContentScript({
     const playButton = shadow.querySelector<HTMLButtonElement>('#echo-play')!;
     const prevButton = shadow.querySelector<HTMLButtonElement>('#echo-prev')!;
     const nextButton = shadow.querySelector<HTMLButtonElement>('#echo-next')!;
+    const closeButton = shadow.querySelector<HTMLButtonElement>('#echo-close')!;
     const statusNode = shadow.querySelector<HTMLElement>('#echo-status')!;
     const toast = shadow.querySelector<HTMLElement>('#echo-toast')!;
 
@@ -31,6 +32,7 @@ export default defineContentScript({
     let settings: EchoSettings | undefined;
     let speaking = false;
     let utterance: SpeechSynthesisUtterance | undefined;
+    let previousFocus: HTMLElement | undefined;
 
     function showToast(message: string) {
       toast.textContent = message;
@@ -65,6 +67,7 @@ export default defineContentScript({
         showToast('Speech is not available in this browser. Try a current Chrome build.');
         return;
       }
+      if (reader.hidden && document.activeElement instanceof HTMLElement) previousFocus = document.activeElement;
       settings = await loadSettings();
       parts = buildReading(text, settings);
       if (!parts.length) {
@@ -79,6 +82,7 @@ export default defineContentScript({
       hideAction();
       await addHistory(text);
       updateChunk();
+      closeButton.focus();
       speakCurrent(true);
     }
 
@@ -140,10 +144,16 @@ export default defineContentScript({
     function closeReader() {
       stopSpeech();
       reader.hidden = true;
+      if (previousFocus?.isConnected) previousFocus.focus();
+      previousFocus = undefined;
+    }
+
+    function replayLatest() {
+      loadHistory().then((history) => history[0] ? openReader(history[0].text) : showToast('Nothing to replay yet. Select code and read it once.'));
     }
 
     action.querySelector('button')!.addEventListener('click', () => openReader(selectedText));
-    shadow.querySelector('#echo-close')!.addEventListener('click', closeReader);
+    closeButton.addEventListener('click', closeReader);
     playButton.addEventListener('click', () => speaking ? stopSpeech() : speakCurrent(false));
     prevButton.addEventListener('click', () => move(-1));
     nextButton.addEventListener('click', () => move(1));
@@ -163,19 +173,35 @@ export default defineContentScript({
         openReader(window.getSelection()?.toString() ?? '');
         return;
       }
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'y') {
+        event.preventDefault();
+        replayLatest();
+        return;
+      }
       if (reader.hidden || inForm || event.ctrlKey || event.metaKey || event.altKey) return;
       if (event.key === 'Escape') closeReader();
       if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
       if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
       if (event.key.toLowerCase() === 'r') { event.preventDefault(); speakCurrent(false); }
     });
+    reader.addEventListener('keydown', (event) => {
+      if (event.key !== 'Tab') return;
+      const controls = [closeButton, prevButton, playButton, nextButton].filter((button) => !button.disabled);
+      const current = shadow.activeElement as HTMLButtonElement | null;
+      const currentIndex = current ? controls.indexOf(current) : -1;
+      if (event.shiftKey && currentIndex <= 0) {
+        event.preventDefault();
+        controls.at(-1)?.focus();
+      } else if (!event.shiftKey && currentIndex === controls.length - 1) {
+        event.preventDefault();
+        controls[0]?.focus();
+      }
+    });
 
     chrome.runtime.onMessage.addListener((message) => {
       if (message.type === 'echo:read') openReader(message.text ?? '');
       if (message.type === 'echo:read-selection') openReader(window.getSelection()?.toString() ?? '');
-      if (message.type === 'echo:replay') {
-        loadHistory().then((history) => history[0] ? openReader(history[0].text) : showToast('Nothing to replay yet. Select code and read it once.'));
-      }
+      if (message.type === 'echo:replay') replayLatest();
     });
   }
 });

@@ -1,48 +1,50 @@
-# Code Echo v1 handoff
+# Code Echo repair handoff
 
-## Independent verification status — FAIL (2026-08-27)
+## Status
 
-Candidate `7614f83cff6af72db4e179b878fa785f376d758e` was independently tested from a clean checkout and against `https://code-echo.sociobot.in/`. The live bytes match the candidate for the tested site/ZIP assets, so this is not a deployment-only failure.
+Repair branch based on verifier report commit `d7a79d7345340d3cbda82acf39984c1a18dec14c`. The local production artifact is buildable and all in-repository release checks pass. Deployment evidence is appended after the static deployment completes.
 
-Do not release this candidate until the P1 defects in [.factory/verification.md](verification.md) are fixed and reverified: Chromium does not register the promised `Alt+Shift+R` replay shortcut; opening the reader leaves focus on the underlying page; 390 px mobile axe has a serious scrollable-region keyboard violation; and the public paid flow targets `pilot-api.sociobot.in`. Clean-install `npm test` also fails until a build generates `.wxt/tsconfig.json`. Full commands, response-policy findings, passing evidence, and exact reproduction details are in the verification report.
+## Repairs made
 
-## Shipped
+- Replaced Chromium-rejected `Alt+Shift+R` with the Chromium-registered `Ctrl+Shift+Y` (`MacCtrl+Shift+Y` on macOS). The content script also handles that same accelerator as a page-level fallback, while the MV3 background command continues to replay history. The real-browser regression reads `chrome.commands.getAll()`, asserts the registered key, seeds history, presses the key, and asserts that the tray opens.
+- Made the reading tray a modal dialog, explicitly focuses Close on opening, keeps Tab/Shift+Tab within enabled tray controls, and returns focus to the invoking control on Escape/Close. Real-browser coverage asserts each transition in the Shadow DOM.
+- Removed the mobile-only horizontally scrollable confidence strip. At 390 px it wraps in place; the Playwright mobile test asserts no strip overflow and runs axe at that viewport.
+- Switched license verification and extension host permission from `pilot-api.sociobot.in` to `api.sociobot.in`; no pilot URLs remain in shipped source or package.
+- Production checkout currently returns `404 {"error":"enabled factory product"}` from the Sociobot API, while production verify returns the expected `200` invalid-token response. To avoid advertising a broken purchase, the public checkout CTAs are deliberately withheld and both site and popup explain that checkout is being prepared. Pasted-license restore and production verification remain available. This is the closest honest state until the factory registers/enables the production product.
+- Made clean-checkout tests self-contained: `npm test` and `npm run typecheck` run `wxt prepare` before Vitest/TypeScript, so they no longer depend on a prior build-generated `.wxt/tsconfig.json`.
+- Added `site/public/staticwebapp.config.json`, copied into the deploy root, with a restrictive CSP, Permissions-Policy, nosniff/referrer policy, AVIF/webmanifest MIME types, and one-year immutable cache headers for hashed `/assets/*`.
 
-- WXT + TypeScript Manifest V3 extension with a selection action, context-menu action, `Alt+Shift+E` read command, and `Alt+Shift+R` latest-selection replay.
-- A page-safe Shadow DOM reading tray that keeps one syntax chunk visible, sequences browser-native speech, supports previous/next/replay/stop, and has explicit empty, speech-unavailable, restricted-page, and offline behavior.
-- User-controlled rate, volume, 18–32 px chunk size, paper/night/high-contrast treatment, token/word/line chunking, identifier splitting/literal/spelling, and individually selectable punctuation names.
-- Local pronunciation dictionary and deduplicated ten-item replay history in `chrome.storage.local`, with history deletion.
-- US$9 one-time Echo Pack contract: pilot Sociobot checkout, pasted-license restore, once-per-day verification cache, optimistic offline state after a valid verdict, quiet revocation handling, JavaScript/TypeScript + Python + Git packs, and opt-in `chrome.storage.sync`. Core reading and accessibility controls are never gated.
-- Static Vite product site in `dist/site`, interactive shared-parser preview, mobile layout, paper/dark themes, offline service worker, `/privacy/`, `/terms/`, robots and sitemap files, and stable packaged download at `/downloads/code-echo-chrome.zip`.
-- Product-specific risograph visual system recorded in `.factory/design.md`. The original factory-generated hero source and prompt sidecars are under `assets/src/`; optimized AVIF/WebP/JPEG derivatives are under `site/public/assets/`.
-- Expanded README, MIT license, unit/static contract tests, real-browser Playwright flows, and axe checks.
+## Regression coverage
 
-## Verification completed 2026-08-27
+- `tests/e2e/extension.spec.ts`: packaged MV3 command registration, keyboard replay, dialog focus/Tab loop/focus return, popup axe, and reader axe.
+- `tests/e2e/site.spec.ts`: 390 px no-overflow confidence strip plus mobile axe serious/critical check.
+- `tests/static-contract.test.ts`: no pilot billing URLs, production billing configuration, no unregistered checkout CTA, response-policy configuration, and command-copy contract.
 
-- `npm test`: 13/13 tests passed.
-- `npx tsc --noEmit`: passed with strict TypeScript.
-- `npm run build`: passed from a cleaned output tree. Deploy root is `dist/site/index.html`; extension package is `dist/site/downloads/code-echo-chrome.zip`.
-- `npm run test:e2e`: 8/8 Playwright tests passed in Chromium, covering all three public pages, light and dark accessibility, a real loaded extension popup/content script, the in-page Shadow DOM reader, 390 px layout, demo controls, console errors, and offline state.
-- axe-core: zero serious or critical findings on landing, privacy, terms, dark landing, popup, and the page with the reader open.
-- Lighthouse mobile against the production build: Performance 100, Accessibility 100, Best Practices 100, SEO 100. FCP 0.9 s, LCP 1.5 s, CLS 0, TBT 0 ms, Speed Index 0.9 s.
-- Production payload: landing JavaScript 6.60 KB uncompressed across initial chunks; landing CSS 12.06 KB; AVIF hero 98.2 KB; complete extension 37.93 KB uncompressed / 17.66 KB zip. All are below the factory budgets.
-- `npm audit --audit-level=high`: zero vulnerabilities.
-- Original hero was visually reviewed at full resolution: no people, brands, words, watermarks, broken anatomy, or unintended product UI. Desktop and 390 px full-page screenshots were also reviewed for overflow and hierarchy.
-
-## Run and verify
+## Verification (2026-08-27)
 
 ```sh
-npm install
-npm test
-npm run build
-npm run test:e2e
+npm ci                         # 183 packages; 0 high vulnerabilities
+npm test                       # 15/15 passed from clean install
+npm run typecheck              # passed (`tsc --noEmit`)
+npm run build                  # passed; produces dist/site and MV3 ZIP
+npm run test:e2e               # 8/8 passed in Chromium
+npm audit --audit-level=high   # 0 vulnerabilities
+unzip -t dist/site/downloads/code-echo-chrome.zip  # archive OK
 ```
 
-For manual extension testing, load `.output/chrome-mv3` as an unpacked extension, select code on a normal HTTPS page, and press `Alt+Shift+E`. The static deploy directory is exactly `dist/site`.
+The browser suite covers desktop and 390×844 mobile public pages, keyboard/focus, popup and loaded extension flow, axe serious/critical checks, dark mode, reduced-motion configuration, and offline state. The extension test loads the exact production `.output/chrome-mv3`; the staged consumer ZIP has a valid MV3 manifest, `Ctrl+Shift+Y` replay command, and production API host permission.
 
-## Known release tasks / gaps
+Final asset sizes: initial site JS 6,598 bytes uncompressed (5,887 + 711), primary CSS 12,107 bytes, AVIF hero 98,183 bytes, ZIP 17,856 bytes. All are within the product budgets.
 
-- The checkout and verifier intentionally use `https://pilot-api.sociobot.in` while this product is staged. The factory must register the test product, set its return URL to the site, and switch the API base to production at release.
-- The ZIP is a load-unpacked preview package; Chrome Web Store signing/listing is outside this repository and remains a factory release task.
-- Automated tests verify the Web Speech invocation and visual progression, but headless Chromium cannot judge audible voice quality. A pilot should sample browser/OS voices and complete the success-measure reading task.
-- Browser speech privacy depends on the user’s configured browser/OS voice provider; this is disclosed in the popup and privacy policy.
+## Deploy
+
+Deploy root: `dist/site`. `staticwebapp.config.json` is included at that root and is the source of response headers/MIME/cache policy at Azure Static Web Apps.
+
+```sh
+/opt/fleet/lib/deploy-static.sh code-echo dist/site
+/opt/fleet/lib/verify-url.sh https://code-echo.sociobot.in/ <evidence-dir>
+```
+
+## Remaining external action
+
+The factory must register/enable the `code-echo` production Sociobot product before turning the checkout CTAs back on. No selected code is sent during that process or by the deployed extension.

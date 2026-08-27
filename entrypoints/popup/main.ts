@@ -1,7 +1,7 @@
 import { LANGUAGE_PACKS, PUNCTUATION_LABELS, type EchoSettings, type LicenseState } from '../../lib/types';
 import { clearHistory, loadHistory, loadLicense, loadSettings, saveLicense, saveSettings } from '../../lib/storage';
 
-const BILLING_BASE = 'https://pilot-api.sociobot.in/api/v1/products/code-echo';
+const BILLING_BASE = 'https://api.sociobot.in/api/v1/products/code-echo';
 const DAY = 86_400_000;
 let settings: EchoSettings;
 let license: LicenseState;

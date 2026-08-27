@@ -1,7 +1,7 @@
 import { buildReading } from '../../lib/reader';
 import { DEFAULT_SETTINGS } from '../../lib/types';
 
-const BILLING_BASE = 'https://pilot-api.sociobot.in/api/v1/products/code-echo';
+const BILLING_BASE = 'https://api.sociobot.in/api/v1/products/code-echo';
 const LICENSE_KEY = 'sb_license:code-echo';
 const CHECK_KEY = 'sb_license_check:code-echo';
 const DAY = 86_400_000;

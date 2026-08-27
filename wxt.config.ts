@@ -7,14 +7,14 @@ export default defineConfig({
     description: 'Hear selected code one syntax chunk at a time, without sending it away.',
     version: '1.0.0',
     permissions: ['storage', 'contextMenus', 'activeTab'],
-    host_permissions: ['https://pilot-api.sociobot.in/*'],
+    host_permissions: ['https://api.sociobot.in/*'],
     commands: {
       'read-selection': {
         suggested_key: { default: 'Alt+Shift+E' },
         description: 'Read the current selection'
       },
       'replay-latest': {
-        suggested_key: { default: 'Alt+Shift+R' },
+        suggested_key: { default: 'Ctrl+Shift+Y', mac: 'MacCtrl+Shift+Y' },
         description: 'Replay the latest selection'
       }
     },

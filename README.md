@@ -11,7 +11,7 @@ The reader is deterministic rather than AI-powered. It does not explain, generat
 - Per-mark punctuation controls and three identifier-reading modes
 - Adjustable speech rate, volume, chunk size, and paper/night/high-contrast themes
 - Local pronunciation dictionary and ten-item replay history
-- `R` in the reading tray or `Alt+Shift+R` to replay
+- `R` in the reading tray or `Ctrl+Shift+Y` to replay
 - Clear empty, unavailable-speech, restricted-page, and offline states
 - Optional US$9 Echo Pack with JavaScript/TypeScript, Python, and Git presets plus opt-in Chrome settings sync
 - Static product site, interactive parser preview, privacy policy, and terms
@@ -37,7 +37,9 @@ WXT writes development artifacts to `.output/`. Load `.output/chrome-mv3` from `
 ## Test and build
 
 ```sh
+npm ci
 npm test
+npm run typecheck
 npm run build
 npm run test:e2e # after a production build
 ```
@@ -65,11 +67,11 @@ The end-to-end suite starts a local preview, runs axe against every public page 
 
 ## Paid unlock
 
-Staging uses the Sociobot pilot billing API and the `code-echo` slug. The website and popup implement hosted checkout, return-token capture, restore by pasted license, daily cached verification, offline optimistic access after a valid check, and quiet revocation handling. No payment provider is embedded. The factory swaps the base URL at release.
+The website and popup use the production Sociobot billing API and the `code-echo` slug for license verification. Hosted checkout is intentionally not advertised until the factory completes production product registration; the UI remains honest and supports pasted-license restore, daily cached verification, offline optimistic access after a valid check, and quiet revocation handling. No payment provider is embedded.
 
 ## Privacy and security
 
-There are no analytics, advertising scripts, CDN fonts, or third-party runtime dependencies on the site. Extension host access is limited to the staging license-verification API. The content script runs on pages so it can read the user’s explicit selection; it never performs a network request.
+There are no analytics, advertising scripts, CDN fonts, or third-party runtime dependencies on the site. Extension host access is limited to the Sociobot license-verification API. The content script runs on pages so it can read the user’s explicit selection; it never performs a network request.
 
 ## License
 

@@ -34,6 +34,10 @@ test('390px layout keeps primary actions on screen', async ({ page }) => {
   expect(box).not.toBeNull();
   expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(390);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
+  const strip = page.locator('.confidence-strip .shell');
+  expect(await strip.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
+  const scan = await new AxeBuilder({ page }).analyze();
+  expect(scan.violations.filter((item) => item.impact === 'serious' || item.impact === 'critical')).toEqual([]);
 });
 
 test('dark treatment keeps serious accessibility checks clear', async ({ page }) => {

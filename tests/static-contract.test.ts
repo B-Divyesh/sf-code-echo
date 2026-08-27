@@ -32,4 +32,47 @@ describe('static accessibility contract', () => {
     expect(html).not.toMatch(/<script[^>]+src="https?:\/\//);
     expect(html).not.toMatch(/fonts\.(googleapis|gstatic)\.com/);
   });
+
+  it('uses production billing without advertising an unregistered checkout, and ships static response policies', async () => {
+    const [site, siteMain, popup, popupMain, manifest, config] = await Promise.all([
+      readFile('site/index.html', 'utf8'),
+      readFile('site/src/main.ts', 'utf8'),
+      readFile('entrypoints/popup/index.html', 'utf8'),
+      readFile('entrypoints/popup/main.ts', 'utf8'),
+      readFile('wxt.config.ts', 'utf8'),
+      readFile('site/public/staticwebapp.config.json', 'utf8')
+    ]);
+    for (const source of [siteMain, popupMain, manifest]) {
+      expect(source).toContain('https://api.sociobot.in');
+      expect(source).not.toContain('pilot-api.sociobot.in');
+    }
+    expect(site).not.toContain('/checkout');
+    expect(popup).not.toContain('/checkout');
+    expect(site).toContain('Checkout is being prepared');
+    expect(popup).toContain('checkout is being prepared');
+    expect(config).toContain('Content-Security-Policy');
+    expect(config).toContain('Permissions-Policy');
+    expect(config).toContain('max-age=31536000, immutable');
+    expect(config).toContain('".avif": "image/avif"');
+    expect(config).toContain('".webmanifest": "application/manifest+json"');
+  });
+
+  it('documents the Chromium-registered global replay shortcut', async () => {
+    const [readme, site, popup, manifest] = await Promise.all([
+      readFile('README.md', 'utf8'),
+      readFile('site/index.html', 'utf8'),
+      readFile('entrypoints/popup/index.html', 'utf8'),
+      readFile('wxt.config.ts', 'utf8')
+    ]);
+    expect(readme).toContain('Ctrl+Shift+Y');
+    expect(manifest).toContain('Ctrl+Shift+Y');
+    for (const source of [site, popup]) {
+      expect(source).toContain('Ctrl Shift Y');
+      expect(source).not.toContain('Alt Shift R');
+    }
+    for (const source of [readme, site, popup, manifest]) {
+      expect(source).not.toContain('Alt+Shift+R');
+      expect(source).not.toContain('Alt+Shift+H');
+    }
+  });
 });

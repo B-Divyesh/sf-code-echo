@@ -16,6 +16,8 @@ test('packaged extension popup and on-page reader work', async () => {
     const popup = await context.newPage();
     await popup.goto(`chrome-extension://${extensionId}/popup.html`);
     await expect(popup.getByRole('heading', { name: 'Code Echo', exact: true })).toBeVisible();
+    const commands = await popup.evaluate(() => new Promise<chrome.commands.Command[]>((resolve) => chrome.commands.getAll(resolve)));
+    expect(commands.find((command) => command.name === 'replay-latest')?.shortcut).toBe('Ctrl+Shift+Y');
     const popupScan = await new AxeBuilder({ page: popup }).analyze();
     expect(popupScan.violations.filter((item) => item.impact === 'serious' || item.impact === 'critical')).toEqual([]);
 
@@ -29,9 +31,20 @@ test('packaged extension popup and on-page reader work', async () => {
       selection?.removeAllRanges();
       selection?.addRange(range);
     });
+    await page.locator('#demo-read').focus();
     await page.keyboard.press('Alt+Shift+E');
     await expect(page.locator('#code-echo-root #echo-reader')).toBeVisible();
     await expect(page.locator('#code-echo-root #echo-chunk')).toContainText('chrome');
+    await expect.poll(() => page.locator('#code-echo-root').evaluate((host) => host.shadowRoot?.activeElement?.id)).toBe('echo-close');
+    await page.keyboard.press('Tab');
+    await expect.poll(() => page.locator('#code-echo-root').evaluate((host) => host.shadowRoot?.activeElement?.id)).toBe('echo-play');
+    await page.keyboard.press('Shift+Tab');
+    await expect.poll(() => page.locator('#code-echo-root').evaluate((host) => host.shadowRoot?.activeElement?.id)).toBe('echo-close');
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#code-echo-root #echo-reader')).toBeHidden();
+    await expect(page.locator('#demo-read')).toBeFocused();
+    await page.keyboard.press('Control+Shift+Y');
+    await expect(page.locator('#code-echo-root #echo-reader')).toBeVisible();
     const readerScan = await new AxeBuilder({ page }).analyze();
     expect(readerScan.violations.filter((item) => item.impact === 'serious' || item.impact === 'critical')).toEqual([]);
   } finally {
