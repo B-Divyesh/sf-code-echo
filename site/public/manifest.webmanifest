@@ -1,0 +1,9 @@
+{
+  "name": "Code Echo",
+  "short_name": "Code Echo",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4ebd8",
+  "theme_color": "#f4ebd8",
+  "description": "A local-first, code-aware reading aid."
+}

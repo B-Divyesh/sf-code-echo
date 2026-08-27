@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Code Echo bracket mark">
+  <rect width="128" height="128" rx="24" fill="#f4ebd8"/>
+  <path d="M44 26H28v76h16M84 26h16v76H84" fill="none" stroke="#211d19" stroke-width="10" stroke-linecap="square"/>
+  <path d="M46 48h38M46 64h26M46 80h38" fill="none" stroke="#155c73" stroke-width="8" stroke-linecap="round"/>
+  <path d="M45 62h43" fill="none" stroke="#f4c542" stroke-width="15" stroke-linecap="square" opacity=".9"/>
+  <path d="M46 64h26" fill="none" stroke="#211d19" stroke-width="6" stroke-linecap="round"/>
+</svg>

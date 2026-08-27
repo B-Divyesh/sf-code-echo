@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Code Echo reader</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to settings</a>
+    <header class="masthead">
+      <div class="mark" aria-hidden="true">[<i></i>]</div>
+      <div><span class="kicker">LOCAL CODE READER</span><h1>Code Echo</h1></div>
+      <span class="local-seal">Stays local</span>
+    </header>
+    <main id="main">
+      <section class="start-sheet" aria-labelledby="start-title">
+        <p id="start-title">Select code on this page, then:</p>
+        <button class="primary" id="read-selection">Hear selection <kbd>Alt Shift E</kbd></button>
+        <p class="micro">Replay the latest with <kbd>Alt Shift R</kbd>.</p>
+        <p id="action-status" class="notice" role="status"></p>
+      </section>
+
+      <details open>
+        <summary>Reading controls</summary>
+        <div class="detail-body form-grid">
+          <label for="rate">Speech rate <output id="rate-output">0.9×</output></label>
+          <input id="rate" type="range" min="0.5" max="1.5" step="0.1" />
+          <label for="text-size">Chunk size <output id="size-output">24 px</output></label>
+          <input id="text-size" type="range" min="18" max="32" step="2" />
+          <label for="chunk-mode">Break selections by</label>
+          <select id="chunk-mode"><option value="syntax">Syntax token</option><option value="words">Word group</option><option value="line">Line</option></select>
+          <label for="identifier-mode">Read identifiers</label>
+          <select id="identifier-mode"><option value="split">Split camelCase + snake_case</option><option value="literal">As written</option><option value="spell">Letter by letter</option></select>
+          <label for="theme">Reader theme</label>
+          <select id="theme"><option value="paper">Paper</option><option value="night">Night ink</option><option value="contrast">High contrast</option></select>
+        </div>
+      </details>
+
+      <details>
+        <summary>Punctuation to speak</summary>
+        <fieldset id="punctuation-list" class="check-grid detail-body"><legend>Choose each mark</legend></fieldset>
+      </details>
+
+      <details>
+        <summary>Pronunciation dictionary</summary>
+        <div class="detail-body">
+          <p class="micro">Override a name once; every matching token follows it.</p>
+          <form id="dictionary-form" class="dictionary-form">
+            <label>Identifier<input id="dictionary-token" required maxlength="60" autocomplete="off" /></label>
+            <label>Say it as<input id="dictionary-speech" required maxlength="100" autocomplete="off" /></label>
+            <button type="submit">Save pronunciation</button>
+          </form>
+          <ul id="dictionary-list" class="plain-list"></ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Replay history</summary>
+        <div class="detail-body">
+          <p id="history-empty" class="empty">Your last ten selections appear here after you read one.</p>
+          <ul id="history-list" class="plain-list history"></ul>
+          <button class="quiet" id="clear-history">Clear local history</button>
+        </div>
+      </details>
+
+      <section class="pack-sheet" aria-labelledby="packs-title">
+        <span class="kicker">ECHO PACK · US$9 ONCE</span>
+        <h2 id="packs-title">Preset the fiddly names</h2>
+        <p>Install JavaScript, Python, and Git pronunciation sets, plus optional browser sync. The complete reader stays free.</p>
+        <div id="pack-buttons" class="pack-buttons"></div>
+        <label class="sync-row"><input id="sync-enabled" type="checkbox" /> Sync settings through this browser</label>
+        <a class="button-link" href="https://pilot-api.sociobot.in/api/v1/products/code-echo/checkout" target="_blank">Buy the one-time pack</a>
+        <form id="license-form" class="license-form">
+          <label for="license-token">Have a license? Paste it</label>
+          <div><input id="license-token" type="password" autocomplete="off" /><button type="submit">Verify</button></div>
+        </form>
+        <p id="license-status" class="notice" role="status"></p>
+      </section>
+    </main>
+    <footer><p>Speech uses your browser or operating system voice. Depending on your browser settings, its speech provider may process text. Code Echo itself sends no selected code.</p><a href="https://code-echo.sociobot.in/privacy" target="_blank">Privacy</a> · <a href="https://code-echo.sociobot.in/terms" target="_blank">Terms</a></footer>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

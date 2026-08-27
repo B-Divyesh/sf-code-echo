@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Code Echo reads selected code one syntax chunk at a time, with adjustable punctuation and identifier pronunciation." />
+    <meta name="theme-color" content="#f4ebd8" />
+    <title>Code Echo — keep your place in unfamiliar code</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preload" href="/assets/hero-risograph.avif" as="image" type="image/avif" fetchpriority="high" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div class="offline-banner" id="offline-banner" role="status" hidden>Offline. This page is cached; the installed reader still works locally.</div>
+    <header class="site-header shell">
+      <a class="brand" href="/" aria-label="Code Echo home"><span class="brand-mark" aria-hidden="true">[<i></i>]</span><span>Code Echo</span></a>
+      <nav aria-label="Primary"><a href="#how">How it works</a><a href="#privacy-first">Privacy</a><a href="#packs">Echo Pack</a></nav>
+      <button class="theme-button" id="theme-button" type="button" aria-label="Use dark theme"><span aria-hidden="true">◐</span><span>Ink mode</span></button>
+    </header>
+
+    <main id="main">
+      <section class="hero shell">
+        <div class="hero-copy">
+          <p class="eyebrow"><span>01</span> A reading layer for code</p>
+          <h1>Keep your place.<br /><em>Hear the tricky bit.</em></h1>
+          <p class="lede">Select an unfamiliar identifier or punctuation-heavy line. Code Echo separates it into visible syntax chunks and reads exactly the parts you choose.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="/downloads/code-echo-chrome.zip" download>Download for Chrome <span aria-hidden="true">↓</span></a>
+            <a class="text-link" href="#try-it">Try the reading rhythm</a>
+          </div>
+          <p class="download-note">Free core reader · Chrome MV3 · local-first · version 1.0</p>
+        </div>
+        <figure class="hero-art ink-shadow">
+          <picture>
+            <source type="image/avif" srcset="/assets/hero-risograph.avif" />
+            <source type="image/webp" srcset="/assets/hero-risograph.webp" />
+            <img src="/assets/hero-risograph.jpg" width="1200" height="800" fetchpriority="high" decoding="async" alt="Torn strips of punctuation converge into one yellow reading strip inside a dark frame." />
+          </picture>
+          <figcaption><span aria-hidden="true">↳</span> One selection becomes one speakable piece at a time.</figcaption>
+        </figure>
+      </section>
+
+      <section class="confidence-strip" aria-label="Product principles">
+        <div class="shell"><span>NO CODE UPLOADS</span><span>ADJUSTABLE, NOT PRESCRIPTIVE</span><span>KEYBOARD READY</span><span>WORKS OFFLINE</span></div>
+      </section>
+
+      <section class="demo-section shell" id="try-it" aria-labelledby="demo-title">
+        <div class="section-intro">
+          <p class="eyebrow"><span>02</span> Try the rhythm</p>
+          <h2 id="demo-title">Dense line in. One chunk at a time.</h2>
+          <p>This preview uses the same deterministic parser as the extension. Speech comes from your browser or operating system.</p>
+        </div>
+        <div class="demo-workbench ink-shadow">
+          <div class="source-panel">
+            <label for="demo-source">Sample selection</label>
+            <textarea id="demo-source" rows="5" spellcheck="false">const parseHTTPResponse = async (request_id) =&gt; await fetch(`/api/${request_id}`);</textarea>
+            <div class="demo-options">
+              <label for="demo-rate">Rate <output id="demo-rate-output">0.9×</output></label>
+              <input id="demo-rate" type="range" min="0.5" max="1.5" value="0.9" step="0.1" />
+            </div>
+            <button id="demo-read" class="button primary" type="button">Read this selection</button>
+          </div>
+          <div class="reader-panel" aria-labelledby="reader-title">
+            <div class="reader-head"><span id="reader-title">CURRENT CHUNK</span><span id="demo-position">— / —</span></div>
+            <code id="demo-chunk" aria-live="polite">Select “Read this selection”</code>
+            <p id="demo-spoken">The spoken form appears here.</p>
+            <div class="reader-controls">
+              <button id="demo-prev" type="button" disabled aria-label="Previous chunk">←</button>
+              <button id="demo-replay" type="button" disabled>Replay</button>
+              <button id="demo-next" type="button" disabled aria-label="Next chunk">→</button>
+            </div>
+            <p class="demo-status" id="demo-status" role="status">Ready. Nothing leaves this page.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="how-section shell" id="how" aria-labelledby="how-title">
+        <div class="section-intro narrow"><p class="eyebrow"><span>03</span> On any code page</p><h2 id="how-title">Support on demand, then out of the way.</h2></div>
+        <ol class="steps">
+          <li><span class="step-number">1</span><div><h3>Select the sticky part</h3><p>A line, token, or identifier on documentation and review pages.</p></div></li>
+          <li><span class="step-number">2</span><div><h3>Press Alt Shift E</h3><p>The reading tray opens beside your place. The context menu works too.</p></div></li>
+          <li><span class="step-number">3</span><div><h3>Replay without hunting</h3><p>Press R inside the tray or Alt Shift R anywhere for your latest selection.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="preferences-section" aria-labelledby="preferences-title">
+        <div class="shell preference-grid">
+          <div class="section-intro"><p class="eyebrow"><span>04</span> Your reading, your rules</p><h2 id="preferences-title">No font folklore. Real controls.</h2><p>Dyslexia is not one visual preference. Adjust the support you want and leave the rest alone.</p></div>
+          <ul class="control-notes">
+            <li><strong>Speak punctuation</strong><span>Choose each mark: braces, dots, arrows, commas, or none.</span></li>
+            <li><strong>Shape identifiers</strong><span>Split camelCase and snake_case, say as written, or spell.</span></li>
+            <li><strong>Hold one chunk</strong><span>Choose syntax token, word group, or whole line and set 18–32 px type.</span></li>
+            <li><strong>Save local overrides</strong><span>Teach the reader your project names and acronyms.</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="privacy-section shell" id="privacy-first" aria-labelledby="privacy-title">
+        <div class="privacy-stamp" aria-hidden="true"><span>LOCAL</span><i>≠</i><span>UPLOAD</span></div>
+        <div><p class="eyebrow"><span>05</span> Privacy is the architecture</p><h2 id="privacy-title">Your code is not our input.</h2><p>Parsing, preferences, and ten-item replay history live in the extension. Code Echo has no analytics and no server for snippets. Web Speech uses a voice supplied by your browser or operating system; depending on those settings, that provider may process spoken text.</p><a class="text-link" href="/privacy/">Read the plain-language privacy policy</a></div>
+      </section>
+
+      <section class="pack-section shell" id="packs" aria-labelledby="pack-title">
+        <div class="pack-card ink-shadow">
+          <p class="eyebrow light"><span>06</span> Optional Echo Pack</p>
+          <h2 id="pack-title">Preset the fiddly names.</h2>
+          <p class="pack-price"><strong>US$9</strong> one-time purchase</p>
+          <ul><li>JavaScript + TypeScript pronunciations</li><li>Python “dunder” and common terms</li><li>Git and code-review shorthand</li><li>Optional settings sync through your browser</li></ul>
+          <p>The full reader, custom pronunciation dictionary, visual controls, replay, and history stay free.</p>
+          <a class="button marker" href="https://pilot-api.sociobot.in/api/v1/products/code-echo/checkout">Buy the Echo Pack</a>
+          <p class="legal-note">One-time license. Sociobot/Dodo is the merchant of record. Refunds revoke the license.</p>
+        </div>
+        <div class="restore-sheet">
+          <h3>Already purchased?</h3>
+          <p>Paste a license to verify it on this browser. Then paste the same license in the extension to install packs.</p>
+          <form id="license-form">
+            <label for="license-token">License token</label>
+            <div><input id="license-token" type="password" autocomplete="off" /><button type="submit">Verify license</button></div>
+          </form>
+          <p id="license-status" class="form-status" role="status"></p>
+          <p><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>
+        </div>
+      </section>
+
+      <section class="install-section shell" aria-labelledby="install-title">
+        <p class="eyebrow"><span>07</span> Install the preview build</p>
+        <h2 id="install-title">Three steps, no account.</h2>
+        <ol><li>Download and unzip the Chrome package.</li><li>Open <code>chrome://extensions</code> and turn on Developer mode.</li><li>Choose “Load unpacked,” then select the unzipped folder.</li></ol>
+        <a class="button primary" href="/downloads/code-echo-chrome.zip" download>Download Code Echo 1.0</a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell"><div><a class="brand footer-brand" href="/"><span class="brand-mark" aria-hidden="true">[<i></i>]</span><span>Code Echo</span></a><p>A selective code reader, not a diagnosis or a general screen reader.</p></div><div><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-code-echo">Source</a></div></div>
+      <p class="disclosure shell">Hero artwork was generated for Code Echo with the factory image model on 27 August 2026; no stock assets or third-party fonts are used.</p>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
