@@ -2,7 +2,7 @@
 
 ## Status
 
-Repair branch based on verifier report commit `d7a79d7345340d3cbda82acf39984c1a18dec14c`. The local production artifact is buildable and all in-repository release checks pass. Deployment evidence is appended after the static deployment completes.
+Repair branch based on verifier report commit `d7a79d7345340d3cbda82acf39984c1a18dec14c`. The repaired production artifact was deployed to `https://code-echo.sociobot.in/` on 2026-08-27; all in-repository and live checks listed below passed.
 
 ## Repairs made
 
@@ -44,6 +44,10 @@ Deploy root: `dist/site`. `staticwebapp.config.json` is included at that root an
 /opt/fleet/lib/deploy-static.sh code-echo dist/site
 /opt/fleet/lib/verify-url.sh https://code-echo.sociobot.in/ <evidence-dir>
 ```
+
+Deployment `441f59ae-5352-4c3b-9071-26bca398e9fa` succeeded to Azure Static Web Apps. Live verification returned HTTP 200 in 836 ms with no console errors, one title/language/h1/main landmark, and no images missing alt text. A live 390×844 reduced-motion run found zero axe serious/critical violations, `scrollWidth === 390`, an active service worker, and a successful offline cached reload with visible `<main>`.
+
+Live headers now include CSP, Permissions-Policy, `nosniff`, and strict-origin referrer policy. Hashed JS and AVIF responses return `Cache-Control: public, max-age=31536000, immutable`; AVIF is `image/avif` and the web manifest is `application/manifest+json`. Local/live SHA-256 hashes match for `index.html`, the initial JavaScript asset, and `downloads/code-echo-chrome.zip`. Initial live-page requests were same-origin only; no pilot API URL was present.
 
 ## Remaining external action
 
