@@ -1,0 +1,12 @@
+{
+  "slug": "code-echo",
+  "title": "Code Echo",
+  "territory": "utilities",
+  "user": "Dyslexic developers and learners who need to inspect identifiers, punctuation-heavy syntax, and unfamiliar snippets without losing their place or relying on a generic screen reader mode.",
+  "smallest_useful_product": "A browser extension for documentation and code-review pages that reads a selected line/token with programmable punctuation and identifier pronunciation, shows one syntax chunk at a time, and offers a one-key replay history.",
+  "success_measure": "At least 60% of pilot users complete an unfamiliar code-reading task with fewer rereads and voluntarily save three pronunciation/chunk preferences.",
+  "artifact_class": "browser-extension",
+  "monetization": "freemium — the core reader should be accessible; paid syncable language/pronunciation packs can support upkeep.",
+  "constraints": "Never transmit code by default; use Web Speech only with clear browser/provider disclosure; users must control speech rate and all visual settings.",
+  "state": "RESEARCHED"
+}
