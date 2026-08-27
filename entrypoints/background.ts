@@ -2,10 +2,12 @@ import { defineBackground } from 'wxt/utils/define-background';
 
 export default defineBackground(() => {
   chrome.runtime.onInstalled.addListener(() => {
-    chrome.contextMenus.create({
-      id: 'code-echo-read',
-      title: 'Read selection with Code Echo',
-      contexts: ['selection']
+    chrome.contextMenus.removeAll(() => {
+      chrome.contextMenus.create({
+        id: 'code-echo-read',
+        title: 'Read selection with Code Echo',
+        contexts: ['selection']
+      });
     });
   });
 

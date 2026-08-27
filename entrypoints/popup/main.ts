@@ -24,10 +24,13 @@ async function init() {
 
 function bindSettings() {
   const rate = byId<HTMLInputElement>('rate');
+  const volume = byId<HTMLInputElement>('volume');
   const size = byId<HTMLInputElement>('text-size');
   rate.value = String(settings.rate);
+  volume.value = String(settings.volume);
   size.value = String(settings.textSize);
   byId<HTMLOutputElement>('rate-output').value = `${settings.rate.toFixed(1)}×`;
+  byId<HTMLOutputElement>('volume-output').value = `${Math.round(settings.volume * 100)}%`;
   byId<HTMLOutputElement>('size-output').value = `${settings.textSize} px`;
   byId<HTMLSelectElement>('chunk-mode').value = settings.chunkMode;
   byId<HTMLSelectElement>('identifier-mode').value = settings.identifierMode;
@@ -37,6 +40,11 @@ function bindSettings() {
   rate.addEventListener('input', () => {
     settings.rate = Number(rate.value);
     byId<HTMLOutputElement>('rate-output').value = `${settings.rate.toFixed(1)}×`;
+    saveSettings(settings);
+  });
+  volume.addEventListener('input', () => {
+    settings.volume = Number(volume.value);
+    byId<HTMLOutputElement>('volume-output').value = `${Math.round(settings.volume * 100)}%`;
     saveSettings(settings);
   });
   size.addEventListener('input', () => {

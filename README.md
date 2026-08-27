@@ -39,6 +39,7 @@ WXT writes development artifacts to `.output/`. Load `.output/chrome-mv3` from `
 ```sh
 npm test
 npm run build
+npm run test:e2e # after a production build
 ```
 
 The reproducible production command is exactly `npm run build`. It creates:
@@ -48,7 +49,9 @@ The reproducible production command is exactly `npm run build`. It creates:
 - `dist/site/index.html` — static deploy root
 - `dist/site/downloads/code-echo-chrome.zip` — stable site download URL
 
-`npm run build:site` expects `npm run build:extension` to have produced the package first. The factory deploys `dist/site`; this repository does not modify infrastructure, DNS, billing registration, or production configuration.
+`npm run build:site` also builds and stages the extension package so it works from a clean clone. The factory deploys `dist/site`; this repository does not modify infrastructure, DNS, billing registration, or production configuration.
+
+The end-to-end suite starts a local preview, runs axe against every public page and the extension popup, checks the on-page reader through a real loaded extension, and covers 390 px and offline states. Install Chromium once with `npx playwright install chromium` if it is not already available.
 
 ## Architecture
 
