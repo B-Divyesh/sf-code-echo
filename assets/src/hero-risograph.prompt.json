@@ -1,0 +1,8 @@
+{
+  "asset": "hero-risograph.png",
+  "date": "2026-08-27",
+  "generator": "/opt/fleet/lib/gen-image.sh",
+  "deployment": "factory-image",
+  "use_case": "stylized-concept",
+  "prompt": "Wide landing-page hero illustration in a tactile two-pass risograph collage. Warm recycled paper background; layered torn paper code strips with abstract brackets, underscores, dots, and camel-hump marks; a dark navy-black reading window isolates one marker-yellow strip; imperfect teal-blue and vermilion ink registration, halftone grain, small crop marks, pencil guide arrows. Editorial still life, handmade print texture, confident negative space, no gradients. No readable text, no letters forming words, no logos, no watermarks, no brands, no people, no screens, no photorealism."
+}
