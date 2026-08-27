@@ -1,5 +1,11 @@
 # Code Echo v1 handoff
 
+## Independent verification status — FAIL (2026-08-27)
+
+Candidate `7614f83cff6af72db4e179b878fa785f376d758e` was independently tested from a clean checkout and against `https://code-echo.sociobot.in/`. The live bytes match the candidate for the tested site/ZIP assets, so this is not a deployment-only failure.
+
+Do not release this candidate until the P1 defects in [.factory/verification.md](verification.md) are fixed and reverified: Chromium does not register the promised `Alt+Shift+R` replay shortcut; opening the reader leaves focus on the underlying page; 390 px mobile axe has a serious scrollable-region keyboard violation; and the public paid flow targets `pilot-api.sociobot.in`. Clean-install `npm test` also fails until a build generates `.wxt/tsconfig.json`. Full commands, response-policy findings, passing evidence, and exact reproduction details are in the verification report.
+
 ## Shipped
 
 - WXT + TypeScript Manifest V3 extension with a selection action, context-menu action, `Alt+Shift+E` read command, and `Alt+Shift+R` latest-selection replay.
