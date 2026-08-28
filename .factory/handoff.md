@@ -57,6 +57,11 @@ accessibility `1.0`.
 Deploy the generated static directory `dist/site/`. The staged extension zip
 is `dist/site/downloads/code-echo-chrome.zip`.
 
+Deployed 2026-08-28 through `/opt/fleet/lib/deploy-static.sh` as Azure Static
+Web Apps deployment `6d4031af-1ee4-408b-b851-ab11f879a479`. Production checks
+passed at `https://code-echo.sociobot.in/` and `/demo/` with zero console
+errors; `https://code-echo.sociobot.in/not-a-real-page` returned HTTP 404.
+
 ## Known gaps
 
 No known blocking findings remain. The optional paid checkout is not advertised
