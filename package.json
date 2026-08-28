@@ -19,11 +19,12 @@
     "typecheck": "npm run prepare && tsc --noEmit"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
-    "@playwright/test": "^1.62.1",
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.58.2",
     "@types/chrome": "^0.1.1",
     "@types/node": "^22.10.2",
     "sharp": "^0.35.4",
+    "playwright-core": "1.58.2",
     "typescript": "^5.9.2",
     "vite": "^7.1.3",
     "vitest": "^3.2.4",

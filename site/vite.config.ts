@@ -15,8 +15,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         home: fromSite('index.html'),
+        demo: fromSite('demo/index.html'),
         privacy: fromSite('privacy/index.html'),
-        terms: fromSite('terms/index.html')
+        terms: fromSite('terms/index.html'),
+        notFound: fromSite('404/index.html')
       }
     }
   },

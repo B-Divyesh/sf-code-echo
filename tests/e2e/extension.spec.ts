@@ -2,7 +2,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { chromium, expect, test } from '@playwright/test';
 import { resolve } from 'node:path';
 
-test('packaged extension popup and on-page reader work', async () => {
+test('@claim:extension-controls opens selected code and replays it with the documented shortcuts', async () => {
+  test.setTimeout(20_000);
   const extensionPath = resolve('.output/chrome-mv3');
   const context = await chromium.launchPersistentContext('', {
     channel: 'chromium',
@@ -27,6 +28,18 @@ test('packaged extension popup and on-page reader work', async () => {
     await expect(popup.locator('#license-status')).toHaveText('Paste a license token to verify it.');
     const commands = await popup.evaluate(() => new Promise<chrome.commands.Command[]>((resolve) => chrome.commands.getAll(resolve)));
     expect(commands.find((command) => command.name === 'replay-latest')?.shortcut).toBe('Ctrl+Shift+Y');
+    await popup.locator('#chunk-mode').selectOption('line');
+    await popup.locator('#identifier-mode').selectOption('spell');
+    await popup.locator('summary').filter({ hasText: 'Punctuation to speak' }).click();
+    await popup.locator('#punctuation-list input').first().uncheck();
+    await popup.locator('summary').filter({ hasText: 'Pronunciation dictionary' }).click();
+    await popup.locator('#dictionary-token').fill('HTTP');
+    await popup.locator('#dictionary-speech').fill('H T T P');
+    await popup.locator('#dictionary-form button').click();
+    await expect(popup.locator('#dictionary-list')).toContainText('HTTP → H T T P');
+    await expect.poll(() => popup.evaluate(() => new Promise<unknown>((resolve) => chrome.storage.local.get('echoSettings', resolve)))).toMatchObject({
+      echoSettings: expect.objectContaining({ chunkMode: 'line', identifierMode: 'spell', dictionary: expect.objectContaining({ HTTP: 'H T T P' }) })
+    });
     const popupScan = await new AxeBuilder({ page: popup }).analyze();
     expect(popupScan.violations.filter((item) => item.impact === 'serious' || item.impact === 'critical')).toEqual([]);
 

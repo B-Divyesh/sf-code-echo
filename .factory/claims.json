@@ -1,0 +1,37 @@
+[
+  {
+    "id": "chunk-reader",
+    "claim": "Reads sample code one chunk at a time",
+    "where": "landing sample reader, /demo, README",
+    "test": "npm run test:e2e -- --grep @claim:chunk-reader",
+    "sandbox": "fresh browser context opens /demo?demo=1, observes the first visual and spoken chunk, then advances it"
+  },
+  {
+    "id": "demo-isolation",
+    "claim": "Demo sample data is not saved to your reader",
+    "where": "demo banner, /demo",
+    "test": "npm run test:e2e -- --grep @claim:demo-isolation",
+    "sandbox": "fresh browser context seeds a real key, edits and resets demo data, then checks namespaces"
+  },
+  {
+    "id": "no-code-upload",
+    "claim": "Code stays on your device",
+    "where": "landing facts, privacy section, README",
+    "test": "npm run test:e2e -- --grep @claim:no-code-upload",
+    "sandbox": "fresh browser context records every demo-flow request and verifies no selected text leaves same origin"
+  },
+  {
+    "id": "offline-reload",
+    "claim": "Works offline after setup",
+    "where": "landing facts, README",
+    "test": "npm run test:e2e -- --grep @claim:offline-reload",
+    "sandbox": "fresh browser context visits /demo, waits for service-worker control, reloads online once, then reloads offline and advances the reader"
+  },
+  {
+    "id": "extension-controls",
+    "claim": "Open selected code with Alt Shift E, replay it with Ctrl Shift Y, and save reader controls locally",
+    "where": "How it works, reader controls, README",
+    "test": "npm run test:e2e -- --grep @claim:extension-controls",
+    "sandbox": "packaged extension in a fresh persistent Chromium context on the shipped local site"
+  }
+]
