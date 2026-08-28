@@ -58,6 +58,9 @@ Prompt:
 
 Generated with the factory image deployment through `/opt/fleet/lib/gen-image.sh`, 2026-08-27. The generated image is original to this product and is disclosed in the site footer. Source PNG and the exact prompt sidecar live under `assets/src/`; optimized AVIF/WebP derivatives live under `site/public/assets/`.
 
+`site/public/assets/code-echo-social.jpg` is a reviewed 1200×630 crop of that
+same original hero asset for social metadata; it adds no new subject matter.
+
 ### Authored graphics
 
 The Echo bracket mark, punctuation chips, arrows, texture overlays, and extension icons are hand-authored SVG/CSS for Code Echo. They use only geometric primitives and contain no third-party assets.
