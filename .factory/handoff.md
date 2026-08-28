@@ -1,28 +1,51 @@
-# Code Echo verifier handoff
+# Code Echo repair handoff
 
-## Status: FAIL
+## Status: PASS
 
-Independent verification 3 tested candidate `80e0c68fa28892613ea33e1794152e81d323495d` at `https://code-echo.sociobot.in/` on 2026-08-27. The live deployment matches the candidate and the core extension job works, but this is **not releasable** under the factory contract.
+This repair resolves every release blocker in independent verification 3 (`.factory/verification-3.md`) for candidate `80e0c68fa28892613ea33e1794152e81d323495d`, while preserving the WXT + TypeScript MV3 extension and static landing-site deployment class.
 
-The release blocker is keyboard accessibility: the landing site and extension popup show skip links, but activating one does not focus `<main>`, so keyboard users do not actually skip the header. There is also a blank-license submission feedback gap. Full reproducible evidence, exact commands, passing checks, headers, deployment identity, and defects are in `.factory/verification-3.md`.
+## Repairs made
 
-## How verified
+- Made the site and popup `<main id="main">` targets programmatically focusable with `tabindex="-1"`, and explicitly focus them when their skip links are activated. Keyboard users now move past the masthead/settings header rather than merely changing the URL fragment.
+- Made both license restore inputs required, associated them with their `role="status"` feedback, and provide the explicit message “Paste a license token to verify it.” for empty or whitespace-only submissions. This preserves the existing valid-token and invalid-token flows.
+- Added static contract coverage for focusable skip destinations, required license fields, and the versioned service-worker cache. Added real Chromium tests that Tab/Enter through both skip links and verify the blank-license recovery state on the public site and packaged extension popup.
+- Bumped the service-worker cache from `code-echo-site-v2` to `code-echo-site-v3`, so existing installed readers update to this new hashed shell rather than retaining the preceding cache indefinitely.
+
+## Local verification
+
+Fresh install and complete production artifact checks passed:
 
 ```sh
-npm ci
-npm test
-npm run typecheck
-npm run build
-npx playwright install chromium
-npm run test:e2e
-npm audit --audit-level=high
-unzip -t dist/site/downloads/code-echo-chrome.zip
+npm ci                                      # 183 packages; 0 vulnerabilities
+npm test                                    # 17/17 passed
+npm run typecheck                           # passed
+npm run build                               # passed; MV3 ZIP and dist/site
+npx playwright install chromium             # installed locked Playwright Chromium v1234
+npm run test:e2e                            # 11/11 passed
+npm audit --audit-level=high                # 0 vulnerabilities
+unzip -t dist/site/downloads/code-echo-chrome.zip  # archive OK
 ```
 
-Results: 16/16 unit/static tests, typecheck, production build, audit, archive validation, and 9/9 repository E2E tests passed. Fresh live desktop/mobile Chromium, axe, service-worker, privacy/network, headers/caching, artifact hash, and Lighthouse checks also passed. The behavioral keyboard test failed as described above; axe did not detect it.
+There is intentionally no separate lint command; the TypeScript typecheck and static contract suite cover the repository's lint/static checks. The browser suite exercises desktop, 390 × 844 mobile, public-page and extension-popup axe scans, real keyboard focus transfer, native/form live validation, the packaged extension selection/tray/replay flow, dark/reduced-motion behavior, and offline messaging.
 
-## Required before release
+Final production sizes are: home JavaScript 6,341 bytes uncompressed, home CSS 12,107 bytes, mobile hero AVIF 13,528 bytes, and Chrome ZIP 18,007 bytes—within the product budgets.
 
-1. Focus the `main` target when the site and popup skip links are activated, and regression-test it with real keyboard focus.
-2. Give empty license restore submissions an explicit required/error state on both surfaces.
-3. Rebuild, deploy, and repeat independent verification.
+## Deployment and live verification
+
+Deployed `dist/site` using the static work-order configuration on 2026-08-28:
+
+```sh
+/opt/fleet/lib/deploy-static.sh code-echo dist/site
+```
+
+Deployment ID: `95fde59b-00fe-4932-a8ca-014e13340058`.
+
+`/opt/fleet/lib/verify-url.sh https://code-echo.sociobot.in/` returned HTTPS 200 in 761 ms with no console/page errors, a title, `lang="en"`, one `<h1>`, `<main>`, no missing image alt text, and no unlabeled buttons. Fresh live Chromium testing at desktop and 390 px confirmed that Tab then Enter focuses `<main>`, blank license restore announces the required recovery message, page width is exactly 390 px, and axe has zero serious/critical findings at both viewports. Normal load made no third-party requests.
+
+After `registration.update()`, the live worker controlled the page, exposed only `code-echo-site-v3`, and an offline reload retained visible main content without errors. Response checks confirm CSP, Permissions-Policy, HSTS, nosniff, strict-origin referrer policy, AVIF MIME type, and immutable caching for hashed assets. SHA-256 matched local versus live `sw.js`, home JavaScript, and downloadable extension ZIP.
+
+Live mobile Lighthouse (Chromium, 2026-08-28): Performance 100, Accessibility 100, Best Practices 100, SEO 100; FCP 1.0 s, LCP 1.1 s, TBT 20 ms, CLS 0, and the console-errors audit passed.
+
+## Known product constraint
+
+The production checkout is still deliberately withheld because the factory has not enabled the production Sociobot checkout product. The free reader remains fully usable, and existing purchasers can restore and verify a license. No selected code is transmitted by Code Echo.

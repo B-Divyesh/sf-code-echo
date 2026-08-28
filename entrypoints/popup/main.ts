@@ -10,6 +10,12 @@ const byId = <T extends HTMLElement>(id: string) => document.getElementById(id) 
 const status = byId<HTMLParagraphElement>('action-status');
 const licenseStatus = byId<HTMLParagraphElement>('license-status');
 
+function setupSkipLink() {
+  const skipLink = document.querySelector<HTMLAnchorElement>('.skip-link');
+  const main = byId<HTMLElement>('main');
+  skipLink?.addEventListener('click', () => main.focus());
+}
+
 async function init() {
   [settings, license] = await Promise.all([loadSettings(), loadLicense()]);
   bindSettings();
@@ -170,10 +176,26 @@ function bindActions() {
     settings.syncEnabled = (event.currentTarget as HTMLInputElement).checked && license.valid;
     saveSettings(settings);
   });
+  const licenseInput = byId<HTMLInputElement>('license-token');
+  const showRequiredLicenseMessage = () => {
+    licenseInput.setAttribute('aria-invalid', 'true');
+    licenseStatus.textContent = 'Paste a license token to verify it.';
+  };
+  licenseInput.addEventListener('invalid', showRequiredLicenseMessage);
+  licenseInput.addEventListener('input', () => {
+    licenseInput.setCustomValidity('');
+    licenseInput.removeAttribute('aria-invalid');
+  });
   byId<HTMLFormElement>('license-form').addEventListener('submit', (event) => {
     event.preventDefault();
-    const token = byId<HTMLInputElement>('license-token').value.trim();
-    if (token) verifyLicense(token, true);
+    const token = licenseInput.value.trim();
+    if (!token) {
+      licenseInput.setCustomValidity('Paste a license token to verify it.');
+      showRequiredLicenseMessage();
+      licenseInput.reportValidity();
+      return;
+    }
+    verifyLicense(token, true);
   });
   window.addEventListener('online', () => { status.textContent = 'Back online. Local reading was available throughout.'; });
   window.addEventListener('offline', () => { status.textContent = 'Offline. The local reader still works.'; });
@@ -208,4 +230,5 @@ async function verifyLicense(token: string, announce: boolean) {
   }
 }
 
+setupSkipLink();
 init();

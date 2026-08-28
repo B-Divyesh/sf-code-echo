@@ -20,7 +20,7 @@
       <button class="theme-button" id="theme-button" type="button" aria-label="Use dark theme"><span aria-hidden="true">◐</span><span>Ink mode</span></button>
     </header>
 
-    <main id="main">
+    <main id="main" tabindex="-1">
       <section class="hero shell">
         <div class="hero-copy">
           <p class="eyebrow"><span>01</span> A reading layer for code</p>
@@ -117,7 +117,7 @@
           <p>Paste a license to verify it on this browser. Then paste the same license in the extension to install packs.</p>
           <form id="license-form">
             <label for="license-token">License token</label>
-            <div><input id="license-token" type="password" autocomplete="off" /><button type="submit">Verify license</button></div>
+            <div><input id="license-token" type="password" autocomplete="off" required aria-describedby="license-status" /><button type="submit">Verify license</button></div>
           </form>
           <p id="license-status" class="form-status" role="status"></p>
           <p><a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>

@@ -25,6 +25,12 @@ function setupTheme() {
   });
 }
 
+function setupSkipLink() {
+  const skipLink = document.querySelector<HTMLAnchorElement>('.skip-link');
+  const main = byId<HTMLElement>('main');
+  skipLink?.addEventListener('click', () => main.focus());
+}
+
 function updateThemeLabel(button: HTMLButtonElement, dark: boolean) {
   button.setAttribute('aria-label', dark ? 'Use light theme' : 'Use dark theme');
   const label = button.querySelector('span:last-child');
@@ -103,10 +109,26 @@ async function setupLicense() {
   }
   const form = byId<HTMLFormElement>('license-form');
   const input = byId<HTMLInputElement>('license-token');
+  const status = byId('license-status');
+  const showRequiredLicenseMessage = () => {
+    input.setAttribute('aria-invalid', 'true');
+    status.textContent = 'Paste a license token to verify it.';
+  };
+  input.addEventListener('invalid', showRequiredLicenseMessage);
+  input.addEventListener('input', () => {
+    input.setCustomValidity('');
+    input.removeAttribute('aria-invalid');
+  });
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const token = input.value.trim();
-    if (token) verifyLicense(token, true);
+    if (!token) {
+      input.setCustomValidity('Paste a license token to verify it.');
+      showRequiredLicenseMessage();
+      input.reportValidity();
+      return;
+    }
+    verifyLicense(token, true);
   });
   const token = returned || localStorage.getItem(LICENSE_KEY);
   const cached = JSON.parse(localStorage.getItem(CHECK_KEY) ?? 'null') as { valid: boolean; checkedAt: number; reason?: string } | null;
@@ -133,6 +155,7 @@ async function verifyLicense(token: string, announce: boolean) {
   }
 }
 
+setupSkipLink();
 setupTheme();
 setupDemo();
 setupConnectionState();

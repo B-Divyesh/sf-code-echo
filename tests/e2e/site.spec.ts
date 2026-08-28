@@ -25,6 +25,23 @@ test('interactive reader preview chunks an unfamiliar identifier', async ({ page
   await expect(page.locator('#demo-position')).toHaveText(/2 \/ \d+/);
 });
 
+test('keyboard skip link moves focus to main content', async ({ page }) => {
+  await page.goto('/');
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.skip-link')).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('main')).toBeFocused();
+});
+
+test('blank license restore states the required recovery message', async ({ page }) => {
+  await page.goto('/');
+  const token = page.locator('#license-token');
+  await expect(token).toHaveAttribute('required', '');
+  await page.locator('#license-form button').click();
+  await expect(token).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#license-status')).toHaveText('Paste a license token to verify it.');
+});
+
 test('390px layout keeps primary actions on screen', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');

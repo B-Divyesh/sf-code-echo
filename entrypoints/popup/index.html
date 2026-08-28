@@ -14,7 +14,7 @@
       <div><span class="kicker">LOCAL CODE READER</span><h1>Code Echo</h1></div>
       <span class="local-seal">Stays local</span>
     </header>
-    <main id="main">
+    <main id="main" tabindex="-1">
       <section class="start-sheet" aria-labelledby="start-title">
         <p id="start-title">Select code on this page, then:</p>
         <button class="primary" id="read-selection">Hear selection <kbd>Alt Shift E</kbd></button>
@@ -76,7 +76,7 @@
         <p class="notice">Echo Pack checkout is being prepared. The free reader is fully available; existing licenses can still be restored below.</p>
         <form id="license-form" class="license-form">
           <label for="license-token">Have a license? Paste it</label>
-          <div><input id="license-token" type="password" autocomplete="off" /><button type="submit">Verify</button></div>
+          <div><input id="license-token" type="password" autocomplete="off" required aria-describedby="license-status" /><button type="submit">Verify</button></div>
         </form>
         <p id="license-status" class="notice" role="status"></p>
       </section>

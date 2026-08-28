@@ -24,6 +24,17 @@ describe('static accessibility contract', () => {
     }
   });
 
+  it('makes skip destinations focusable and license restore fields required', async () => {
+    const [site, popup] = await Promise.all([
+      readFile('site/index.html', 'utf8'),
+      readFile('entrypoints/popup/index.html', 'utf8')
+    ]);
+    for (const source of [site, popup]) {
+      expect(source).toMatch(/<main id="main" tabindex="-1">/);
+      expect(source).toMatch(/<input id="license-token"[^>]+required[^>]+aria-describedby="license-status"/);
+    }
+  });
+
   it('explicitly ships a local favicon and responsive hero candidates', async () => {
     const [html, favicon] = await Promise.all([
       readFile('site/index.html', 'utf8'),
@@ -52,13 +63,14 @@ describe('static accessibility contract', () => {
   });
 
   it('uses production billing without advertising an unregistered checkout, and ships static response policies', async () => {
-    const [site, siteMain, popup, popupMain, manifest, config] = await Promise.all([
+    const [site, siteMain, popup, popupMain, manifest, config, serviceWorker] = await Promise.all([
       readFile('site/index.html', 'utf8'),
       readFile('site/src/main.ts', 'utf8'),
       readFile('entrypoints/popup/index.html', 'utf8'),
       readFile('entrypoints/popup/main.ts', 'utf8'),
       readFile('wxt.config.ts', 'utf8'),
-      readFile('site/public/staticwebapp.config.json', 'utf8')
+      readFile('site/public/staticwebapp.config.json', 'utf8'),
+      readFile('site/public/sw.js', 'utf8')
     ]);
     for (const source of [siteMain, popupMain, manifest]) {
       expect(source).toContain('https://api.sociobot.in');
@@ -73,6 +85,7 @@ describe('static accessibility contract', () => {
     expect(config).toContain('max-age=31536000, immutable');
     expect(config).toContain('".avif": "image/avif"');
     expect(config).toContain('".webmanifest": "application/manifest+json"');
+    expect(serviceWorker).toContain("const CACHE = 'code-echo-site-v3'");
   });
 
   it('documents the Chromium-registered global replay shortcut', async () => {

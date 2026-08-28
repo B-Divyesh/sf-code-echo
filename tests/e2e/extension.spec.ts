@@ -16,6 +16,15 @@ test('packaged extension popup and on-page reader work', async () => {
     const popup = await context.newPage();
     await popup.goto(`chrome-extension://${extensionId}/popup.html`);
     await expect(popup.getByRole('heading', { name: 'Code Echo', exact: true })).toBeVisible();
+    await popup.keyboard.press('Tab');
+    await expect(popup.locator('.skip-link')).toBeFocused();
+    await popup.keyboard.press('Enter');
+    await expect(popup.locator('main')).toBeFocused();
+    const licenseToken = popup.locator('#license-token');
+    await expect(licenseToken).toHaveAttribute('required', '');
+    await popup.locator('#license-form button').click();
+    await expect(licenseToken).toHaveAttribute('aria-invalid', 'true');
+    await expect(popup.locator('#license-status')).toHaveText('Paste a license token to verify it.');
     const commands = await popup.evaluate(() => new Promise<chrome.commands.Command[]>((resolve) => chrome.commands.getAll(resolve)));
     expect(commands.find((command) => command.name === 'replay-latest')?.shortcut).toBe('Ctrl+Shift+Y');
     const popupScan = await new AxeBuilder({ page: popup }).analyze();
