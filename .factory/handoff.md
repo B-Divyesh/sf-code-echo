@@ -1,4 +1,25 @@
-# Code Echo repair handoff
+# Code Echo review 3 handoff
+
+## Review 3 result
+
+**PASS — 0 findings and 0 untested public claims.**
+
+Review 3 on 2026-09-05 examined implementation
+`cb82985cf57f8a7dd99bcd737d3b26bd633958f9` against live production
+`https://code-echo.sociobot.in/`. The documentation baseline was
+`2117c1f1b1e57a286e33e7421f262493ad89e39e`.
+
+No product code changed. A fresh checkout passed `npm ci`, 16 unit tests,
+typecheck, production build, ZIP validation, all 12 declared claim commands,
+and all 26 E2E tests. Fresh live desktop/phone contexts passed first-screen
+clarity, demo isolation/reset/exit, recovery paths, offline reload, routes,
+accessibility, privacy requests, headers, links, and Lighthouse
+100/100/100/100. Production bytes match the implementation for the public
+documents, service worker, initial assets, metadata assets, and extension ZIP.
+
+See `.factory/review-3.md` for complete evidence and disposition of every
+earlier finding. The external checkout-registration constraint remains: no
+purchase action is shown and the core reader stays free.
 
 ## Independent verification 5
 
