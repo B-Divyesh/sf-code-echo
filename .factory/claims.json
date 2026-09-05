@@ -1,7 +1,7 @@
 [
   {
     "id": "chunk-reader",
-    "claim": "Reads sample code one chunk at a time",
+    "claim": "Reads sample code one part at a time",
     "where": "landing sample reader, /demo, README",
     "test": "npm run test:e2e -- --grep @claim:chunk-reader",
     "sandbox": "fresh browser context opens /demo?demo=1, observes the first visual and spoken chunk, then advances it"
@@ -11,12 +11,12 @@
     "claim": "Demo sample data is not saved to your reader",
     "where": "demo banner, /demo",
     "test": "npm run test:e2e -- --grep @claim:demo-isolation",
-    "sandbox": "fresh browser context seeds a real key, edits and resets demo data, then checks namespaces"
+    "sandbox": "fresh browser context seeds a real key, edits the sample, exits with Start for real, then revisits the demo and checks both namespaces"
   },
   {
     "id": "no-code-upload",
     "claim": "Code stays on your device",
-    "where": "landing facts, privacy section, README",
+    "where": "landing facts, privacy policy, extension footer, README",
     "test": "npm run test:e2e -- --grep @claim:no-code-upload",
     "sandbox": "fresh browser context records every demo-flow request and verifies no selected text leaves same origin"
   },
@@ -33,5 +33,54 @@
     "where": "How it works, reader controls, README",
     "test": "npm run test:e2e -- --grep @claim:extension-controls",
     "sandbox": "packaged extension in a fresh persistent Chromium context on the shipped local site"
+  },
+  {
+    "id": "free-core-reader",
+    "claim": "The core reader is free",
+    "where": "landing facts, extension popup, terms",
+    "test": "npm run test:e2e -- --grep @claim:free-core-reader",
+    "sandbox": "packaged extension starts with no license and reads, saves a pronunciation, replays, and exposes local history"
+  },
+  {
+    "id": "no-account-demo",
+    "claim": "The sample reader has no account or upload step",
+    "where": "landing privacy section",
+    "test": "npm run test:e2e -- --grep @claim:no-account-demo",
+    "sandbox": "fresh browser context opens the direct demo URL, reads the sample, and observes no account state or external request"
+  },
+  {
+    "id": "in-tray-replay",
+    "claim": "R replays the current part in the reader",
+    "where": "How it works, reader tray",
+    "test": "npm run test:e2e -- --grep @claim:in-tray-replay",
+    "sandbox": "packaged extension opens a selection in a fresh persistent Chromium context and presses R inside the reader"
+  },
+  {
+    "id": "punctuation-control",
+    "claim": "Choose punctuation marks to speak",
+    "where": "reader controls",
+    "test": "npm run test:e2e -- --grep @claim:punctuation-control",
+    "sandbox": "packaged extension reads a dot before and after its punctuation setting changes"
+  },
+  {
+    "id": "identifier-modes",
+    "claim": "Split code names, read them as written, or spell them",
+    "where": "reader controls",
+    "test": "npm run test:e2e -- --grep @claim:identifier-modes",
+    "sandbox": "packaged extension reads one camel-case identifier in split, literal, and spell modes"
+  },
+  {
+    "id": "chunk-modes",
+    "claim": "Choose syntax tokens, word groups, or whole lines",
+    "where": "reader controls",
+    "test": "npm run test:e2e -- --grep @claim:chunk-modes",
+    "sandbox": "packaged extension reads the same multiline source in each mode and observes the visible sequence"
+  },
+  {
+    "id": "pronunciation-overrides",
+    "claim": "Add pronunciations for project names and acronyms",
+    "where": "reader controls",
+    "test": "npm run test:e2e -- --grep @claim:pronunciation-overrides",
+    "sandbox": "packaged extension saves an acronym override and observes the changed spoken form"
   }
 ]

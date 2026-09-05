@@ -14,7 +14,7 @@ describe('static site contract', () => {
       expect(html).toMatch(/class="skip-link"/);
       expect(html).toContain('rel="canonical"');
       expect(html).toContain('og:title');
-      expect(html).toContain('twitter:card');
+    expect(html).toContain('twitter:card');
       expect(html).toContain('apple-touch-icon');
       expect(html).toContain('/privacy/');
       expect(html).toContain('/terms/');
@@ -24,7 +24,7 @@ describe('static site contract', () => {
   it('uses the required plain title and sample action', async () => {
     const html = await readFile('site/index.html', 'utf8');
     expect(html).toContain('Code Echo — reads selected code aloud');
-    expect(html).toContain('Read selected code <em>one piece at a time</em>');
+    expect(html).toContain('Read selected code <em>one part at a time</em>');
     expect(html).toContain('For developers and learners who lose their place in unfamiliar code.');
     expect(html).toContain('Try it with sample code');
     expect(html).toContain('Free core reader. Code stays on your device. Works offline after setup.');
@@ -42,7 +42,7 @@ describe('static site contract', () => {
     expect(demo).toContain('Demo — sample data, nothing is saved');
     expect(demo).toContain('Reset demo');
     expect(demo).toContain('Start for real');
-    expect(notFound).toContain('This page is not in the workbench');
+    expect(notFound).toContain('Page not found');
     expect(config).toContain('"statusCode": 404');
     expect(config).toContain('Content-Security-Policy');
     expect(config).toContain('X-Content-Type-Options');

@@ -1,1 +1,1 @@
-Read selected code aloud one syntax chunk at a time.
+Read selected code one part at a time.

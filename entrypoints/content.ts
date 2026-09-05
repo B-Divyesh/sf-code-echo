@@ -12,7 +12,7 @@ export default defineContentScript({
     const shadow = host.attachShadow({ mode: 'open' });
     document.documentElement.append(host);
 
-    shadow.innerHTML = `<style>${styles}</style><div id="echo-action" hidden><button type="button" aria-label="Read selected code"><span aria-hidden="true">◖</span> Hear selection</button></div><section id="echo-reader" role="dialog" aria-modal="true" aria-labelledby="echo-title" hidden><header><div><span class="eyebrow">CODE ECHO</span><h2 id="echo-title">Reading selection</h2></div><button class="icon-button" id="echo-close" aria-label="Close reader">×</button></header><div class="chunk-frame"><span id="echo-position">1 / 1</span><code id="echo-chunk" aria-live="polite"></code><span id="echo-spoken" class="spoken"></span></div><div class="controls"><button id="echo-prev" aria-label="Previous chunk">← <span>Previous</span></button><button id="echo-play">■ <span>Stop</span></button><button id="echo-next" aria-label="Next chunk"><span>Next</span> →</button></div><p id="echo-hint">R replay · ← → move · Esc close</p><p id="echo-status" class="status" role="status"></p></section><div id="echo-toast" role="status" aria-live="polite" hidden></div>`;
+    shadow.innerHTML = `<style>${styles}</style><div id="echo-action" hidden><button type="button" aria-label="Read selected code"><span aria-hidden="true">◖</span> Hear selection</button></div><section id="echo-reader" role="dialog" aria-modal="true" aria-labelledby="echo-title" hidden><header><div><span class="eyebrow">CODE ECHO</span><h2 id="echo-title">Reading selection</h2></div><button class="icon-button" id="echo-close" aria-label="Close reader">×</button></header><div class="chunk-frame"><span id="echo-position">1 / 1</span><code id="echo-chunk" aria-live="polite"></code><span id="echo-spoken" class="spoken"></span></div><div class="controls"><button id="echo-prev" aria-label="Show previous part">← <span>Previous</span></button><button id="echo-play">■ <span>Stop</span></button><button id="echo-next" aria-label="Show next part"><span>Next</span> →</button></div><p id="echo-hint">R replays this part · ← → move · Esc close</p><p id="echo-status" class="status" role="status"></p></section><div id="echo-toast" role="status" aria-live="polite" hidden></div>`;
 
     const action = shadow.querySelector<HTMLDivElement>('#echo-action')!;
     const reader = shadow.querySelector<HTMLElement>('#echo-reader')!;
@@ -71,7 +71,7 @@ export default defineContentScript({
       settings = await loadSettings();
       parts = buildReading(text, settings);
       if (!parts.length) {
-        showToast('That selection has no speakable chunks with the current punctuation settings.');
+        showToast('That selection has no speakable parts with the current punctuation settings.');
         return;
       }
       selectedText = text;
@@ -101,25 +101,31 @@ export default defineContentScript({
       speaking = false;
       utterance = undefined;
       playButton.innerHTML = '▶ <span>Read</span>';
-      statusNode.textContent = 'Stopped';
+      statusNode.textContent = 'Stopped.';
     }
 
-    function speakCurrent(continueThrough: boolean) {
+    function speakCurrent(continueThrough: boolean, replayed = false) {
       const current = parts[index];
       if (!settings || !current) return;
       speechSynthesis.cancel();
       utterance = new SpeechSynthesisUtterance(current.spoken);
       utterance.rate = settings.rate;
       utterance.volume = settings.volume;
+      playButton.innerHTML = '■ <span>Stop</span>';
+      statusNode.textContent = replayed ? `Replaying part ${index + 1}.` : `Reading part ${index + 1}.`;
       utterance.onstart = () => {
         speaking = true;
         playButton.innerHTML = '■ <span>Stop</span>';
-        statusNode.textContent = `Speaking chunk ${index + 1}`;
+        statusNode.textContent = replayed ? `Replaying part ${index + 1}.` : `Reading part ${index + 1}.`;
       };
       utterance.onerror = (event) => {
         speaking = false;
         playButton.innerHTML = '▶ <span>Read</span>';
-        statusNode.textContent = event.error === 'canceled' || event.error === 'interrupted' ? 'Stopped' : 'Speech could not start. Check this browser’s voice settings.';
+        statusNode.textContent = event.error === 'canceled' || event.error === 'interrupted'
+          ? 'Stopped.'
+          : replayed
+            ? 'Replay could not start. Check this browser’s voice settings.'
+            : 'Speech could not start. Check this browser’s voice settings.';
       };
       utterance.onend = () => {
         if (continueThrough && index < parts.length - 1) {
@@ -129,7 +135,7 @@ export default defineContentScript({
         } else {
           speaking = false;
           playButton.innerHTML = '↻ <span>Replay</span>';
-          statusNode.textContent = 'Finished. Press R to hear it again.';
+          statusNode.textContent = 'Finished. Press R to replay this part.';
         }
       };
       speechSynthesis.speak(utterance);
@@ -182,7 +188,7 @@ export default defineContentScript({
       if (event.key === 'Escape') closeReader();
       if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
       if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
-      if (event.key.toLowerCase() === 'r') { event.preventDefault(); speakCurrent(false); }
+      if (event.key.toLowerCase() === 'r') { event.preventDefault(); speakCurrent(false, true); }
     });
     reader.addEventListener('keydown', (event) => {
       if (event.key !== 'Tab') return;

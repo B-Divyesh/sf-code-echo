@@ -35,7 +35,36 @@ function setupSkipLink() {
 function updateThemeLabel(button: HTMLButtonElement, dark: boolean) {
   button.setAttribute('aria-label', dark ? 'Use light theme' : 'Use dark theme');
   const label = button.querySelector('span:last-child');
-  if (label) label.textContent = dark ? 'Paper mode' : 'Ink mode';
+  if (label) label.textContent = dark ? 'Use light theme' : 'Use dark theme';
+}
+
+function clearDemoStorage() {
+  for (const key of Object.keys(localStorage)) if (key.startsWith(DEMO_PREFIX)) localStorage.removeItem(key);
+}
+
+function setupRouteFocus() {
+  const h1 = document.querySelector<HTMLElement>('h1');
+  const announcement = document.getElementById('route-announcement');
+  const shouldFocus = () => {
+    const entry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    return sessionStorage.getItem('code-echo-route-focus') === 'true' || entry?.type === 'back_forward';
+  };
+  document.addEventListener('click', (event) => {
+    const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[href]');
+    if (!link || link.target || event.defaultPrevented) return;
+    const destination = new URL(link.href, location.href);
+    if (destination.origin === location.origin && destination.pathname !== location.pathname) {
+      sessionStorage.setItem('code-echo-route-focus', 'true');
+    }
+  });
+  addEventListener('pageshow', () => {
+    if (!h1 || !shouldFocus()) return;
+    sessionStorage.removeItem('code-echo-route-focus');
+    requestAnimationFrame(() => {
+      h1.focus({ preventScroll: true });
+      if (announcement) announcement.textContent = h1.textContent?.trim() ?? '';
+    });
+  });
 }
 
 function setupDemo() {
@@ -72,13 +101,14 @@ function setupDemo() {
     byId<HTMLOutputElement>('demo-rate-output').value = `${Number(rate.value).toFixed(1)}×`;
     readSource();
     byId<HTMLButtonElement>('reset-demo').addEventListener('click', () => {
-      for (const key of Object.keys(localStorage)) if (key.startsWith(DEMO_PREFIX)) localStorage.removeItem(key);
+      clearDemoStorage();
       source.value = SAMPLE;
       rate.value = '0.9';
       byId<HTMLOutputElement>('demo-rate-output').value = '0.9×';
       readSource();
       byId('demo-status').textContent = 'Sample reset. Nothing was saved to your reader.';
     });
+    byId<HTMLAnchorElement>('start-for-real').addEventListener('click', () => clearDemoStorage());
   }
 }
 
@@ -97,14 +127,14 @@ function speakDemo() {
   const current = parts[index];
   if (!current) return;
   if (!('speechSynthesis' in window)) {
-    byId('demo-status').textContent = 'Speech is unavailable here. The visible chunk controls still work.';
+    byId('demo-status').textContent = 'Speech is unavailable here. The visible part controls still work.';
     return;
   }
   speechSynthesis.cancel();
   utterance = new SpeechSynthesisUtterance(current.spoken);
   utterance.rate = Number(byId<HTMLInputElement>('demo-rate').value);
-  utterance.onstart = () => { byId('demo-status').textContent = `Speaking chunk ${index + 1}.`; };
-  utterance.onend = () => { byId('demo-status').textContent = 'Finished. Replay or move to the next chunk.'; };
+  utterance.onstart = () => { byId('demo-status').textContent = `Speaking part ${index + 1}.`; };
+  utterance.onend = () => { byId('demo-status').textContent = 'Finished. Replay this part or show the next part.'; };
   utterance.onerror = (event) => {
     if (event.error !== 'canceled' && event.error !== 'interrupted') byId('demo-status').textContent = 'Speech could not start. Check your browser voice settings.';
   };
@@ -124,4 +154,5 @@ setupSkipLink();
 setupTheme();
 setupDemo();
 setupConnectionState();
+setupRouteFocus();
 if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => undefined));

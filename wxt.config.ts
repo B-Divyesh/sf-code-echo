@@ -4,7 +4,7 @@ export default defineConfig({
   srcDir: '.',
   manifest: {
     name: 'Code Echo',
-    description: 'Hear selected code one syntax chunk at a time, without sending it away.',
+    description: 'Hear selected code one syntax part at a time, without sending it away.',
     version: '1.0.0',
     permissions: ['storage', 'contextMenus', 'activeTab'],
     host_permissions: ['https://api.sociobot.in/*'],

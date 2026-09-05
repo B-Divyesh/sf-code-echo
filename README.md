@@ -1,14 +1,15 @@
 # Code Echo
 
 Code Echo is a Chrome extension for developers and learners reading unfamiliar
-code. It reads selected code one syntax chunk at a time.
+code. It reads selected code one syntax part at a time.
 
 Try the isolated sample at `/demo/?demo=1`. It starts with a JavaScript
-selection and has a banner, reset action, and route back to the real product.
-The sample uses only `demo:code-echo:` localStorage keys.
+selection and has a banner and reset action. **Start for real** discards the
+sample and returns to the product. The sample uses only
+`demo:code-echo:` localStorage keys.
 
-The extension opens selected code with `Alt+Shift+E`. It replays the latest
-selection with `Ctrl+Shift+Y`.
+The extension opens selected code with `Alt+Shift+E`. Press `R` in the reader
+to replay the current part. Press `Ctrl+Shift+Y` to replay the latest selection.
 
 ## Run
 
@@ -33,8 +34,8 @@ The project pins Playwright 1.58.2 for the supplied browser.
 
 Every visitor-facing claim is listed in `.factory/claims.json`. Run each listed
 command after a build. The browser tests use `/demo/?demo=1` from a clean
-context and cover reader chunks, isolation, local-only requests, offline reload,
-and extension shortcuts.
+context. They cover reader parts, isolation, privacy, offline use, and reader
+controls.
 
 ## Deploy
 

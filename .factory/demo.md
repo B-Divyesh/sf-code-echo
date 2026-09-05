@@ -6,6 +6,9 @@ The demo starts with a JavaScript `parseHTTPResponse` selection. Its first synta
 chunk and spoken form are already visible. **Reset demo** restores that sample.
 **Start for real** leaves the demo and returns to the product page.
 
+Leaving with **Start for real** removes every `demo:code-echo:` key before
+navigation. Returning to the demo starts with the shipped sample again.
+
 All demo writes use the `demo:code-echo:` localStorage namespace. The normal
 site uses its existing `code-echo-` key namespace, and the demo never reads or
 writes those keys. The demo has no extension storage access.
