@@ -1,5 +1,25 @@
 # Code Echo repair handoff
 
+## Independent verification 5
+
+Verified 2026-09-05 with **PASS**: zero findings and zero untested claims.
+
+- Implementation reviewed: `cb82985cf57f8a7dd99bcd737d3b26bd633958f9`
+- Documentation/report base: `146c6c6335a61ad3ac18b0a485ea13ee040ec085`
+- Live URL: `https://code-echo.sociobot.in/`
+- Fresh clean checkout: `npm ci`, 16 unit tests, typecheck, production build,
+  ZIP validation, all 12 declared claim commands, and all 26 E2E tests passed.
+- Fresh live desktop and 390 px phone checks passed: first-screen clarity, demo
+  isolation/reset/exit, offline reload, 404, links, route metadata/focus, axe,
+  headers, privacy requests, and Lighthouse 100/100/100/100.
+- Candidate/live SHA-256 comparisons matched five HTML documents, service
+  worker, initial app assets, favicon, manifest, hero AVIF, and extension ZIP.
+
+The only external constraint is unchanged: factory billing registration is not
+complete, so checkout remains intentionally unavailable and no purchase action
+is shown. See `.factory/verification-5.md` for the full evidence and earlier-
+finding disposition.
+
 ## Release candidate
 
 - Implementation commit: `cb82985cf57f8a7dd99bcd737d3b26bd633958f9`
