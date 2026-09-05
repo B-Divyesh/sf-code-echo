@@ -1,52 +1,87 @@
-# Review handoff — Code Echo, adversarial first-read review 2
+# Code Echo repair handoff
 
-## Completed
+## Release candidate
 
-- Reviewed the live product cold at 390×844 and 1440×900.
-- Exercised the one-click demo, Reset, Start for real, localStorage isolation,
-  request privacy, and offline behavior.
-- Ran every `.factory/claims.json` command from a fresh clone.
-- Re-ran unit tests, typecheck, build, the complete Playwright suite, live axe
-  scans, the factory URL verifier, metadata checks, and a live link crawl.
-- Audited every landing-page and README copy unit and checked every earlier
-  review finding against both production and source.
-- Wrote `.factory/review-2.md`. No product source was modified.
+- Implementation commit: `cb82985cf57f8a7dd99bcd737d3b26bd633958f9`
+- Base reviewed: `48d2bcd6b842bdaf6cccd08f45c6414dab37dfc3`
+- Static artifact: `dist/site/`
+- Packaged extension: `dist/site/downloads/code-echo-chrome.zip`
+- Production URL: `https://code-echo.sociobot.in/`
 
-## Verdict
+## Completed repairs
 
-**FAIL.** The review records 10 blocking and 8 minor findings. The highest-risk
-issues are demo edits surviving **Start for real**, unlisted or under-tested
-visitor claims, and the still-inconsistent route headers from review 1.
+- `Start for real` clears every `demo:code-echo:` key before navigation. A
+  return to `/demo/?demo=1` starts with the shipped sample; real keys remain.
+- `.factory/claims.json` now lists 12 claims, each with one tagged,
+  outcome-level browser test. New tests cover the free core reader, no-account
+  demo, in-reader `R` replay, punctuation, identifier, part-mode, and custom
+  pronunciation outcomes in a packaged extension.
+- All five routes now share Demo, How it works (`/#how`), and Privacy links.
+  Legal and 404 pages have complete Open Graph/Twitter route metadata.
+- Internal route changes focus the new `h1` and announce it politely. Legal
+  skip links move focus into main content.
+- Public copy now calls the reading unit a **part**. Theme buttons state their
+  result, reader controls name their result, and the mobile theme label remains
+  visible at 390 px.
+- `.factory/demo.md`, `.factory/copy-audit.md`, `README.md`, and the catalog
+  description are current. The catalog copy is also at
+  `/work/.evidence/catalog-description.txt`.
 
-## Verification summary
+## Findings disposition
 
-Fresh clone: `/tmp/code-echo-review2.OQulu8` at
-`d69e1354e676f75eec0f6fbe7a83102d7e0fe7c1`.
+| Finding | Disposition |
+| --- | --- |
+| F-2-1 | Fixed: `@claim:demo-isolation` edits, exits, revisits, and checks both namespaces. |
+| F-2-2 | Fixed: `@claim:free-core-reader` verifies core controls with no license. |
+| F-2-3 | Fixed: `@claim:no-account-demo` completes a direct demo with no account state. |
+| F-2-4 | Removed honestly: the landing no longer promises the context-menu path. |
+| F-2-5 | Fixed: `@claim:in-tray-replay` presses `R` in the loaded reader. |
+| F-2-6–9 | Fixed: tagged tests observe punctuation, identifier, part-mode, and override outcomes. |
+| F-2-10 | Fixed: route-matrix browser test checks all five headers and destinations. |
+| F-2-11 | Fixed: route metadata browser test checks each required social field. |
+| F-2-12 | Fixed: browser forward/back test checks heading focus and announcement. |
+| F-2-13–18 | Fixed: copy audit plus reader-label and mobile-theme browser tests cover the rewrites. |
+| Review 1 and verification 1–3 findings | Retained fixed and retested from a fresh checkout. |
+
+## Verification
+
+Fresh checkout `/tmp/code-echo-clean.J0DiTA` at the implementation commit:
 
 ```text
-npm test             16 passed
-npm run typecheck    passed
-npm run build        passed; dist/site created
-npm run test:e2e     15 passed
-five claim commands  passed individually
+npm ci                                      passed; 0 audited vulnerabilities
+npm test                                    passed; 16 tests
+npm run typecheck                           passed
+npm run build                               passed; dist/site and MV3 ZIP created
+12 commands declared in .factory/claims.json passed individually
+npm run test:e2e                            passed; 26 tests
+unzip -t .output/code-echo-1.0.0-chrome.zip passed
 ```
 
-Live axe scans found no serious or critical violations. The factory URL
-verifier passed `/`, `/demo/`, `/privacy/`, and `/terms/`. All crawled product
-links and the extension download resolved; an unknown route returned the
-designed page with HTTP 404.
+Only `dist/site` was uploaded to the existing `sf-code-echo` static app. DNS
+and app configuration were not changed. Production checks passed:
 
-## Evidence
+- Fresh 1440×900 and 390×844 loads showed job, audience, and sample action
+  before scrolling. Both had no console errors; phone width was exactly 390 px.
+- The live demo began at `const` / `Says: const` / `1 / 13`. Editing it, using
+  **Start for real**, and returning restored the sample without changing real
+  storage. Live offline reload kept the reader enabled.
+- `verify-url.sh` passed: HTTPS 200, title, language, one h1, main, alt text,
+  labelled buttons, and no console errors.
+- Live axe scans found zero serious/critical findings on desktop home and 390 px
+  home, demo, privacy, terms, and 404. Internal link crawl returned 200s; an
+  unknown address returned the designed page with HTTP 404.
+- Live bytes matched the candidate for five page documents, service worker,
+  initial JS/CSS, and downloadable ZIP.
+- Lighthouse: Performance 100, Accessibility 100, Best Practices 100, SEO 100;
+  FCP 1.0 s, LCP 1.2 s, TBT 20 ms, CLS 0.
 
-- Cold screenshots: `/tmp/code-echo-phone-cold.png` and
-  `/tmp/code-echo-desktop-cold.png`
-- Demo screenshot: `/tmp/code-echo-demo-initial.png`
-- URL verifier output and screenshots: `/tmp/code-echo-verify/`
-- Full evidence, exact quotes, claim results, history matrix, and fixes:
-  `.factory/review-2.md`
+Build sizes: initial JS 2,649 bytes gzip, initial CSS 3,724 bytes gzip, mobile
+hero AVIF 13,528 bytes, extension ZIP 18,047 bytes. Evidence is in
+`/work/.evidence/`.
 
-## Left for the repair round
+## Known gap
 
-Address every finding in `.factory/review-2.md`, then repeat the entire review
-from a fresh browser context and clean clone. In particular, extend tests to
-cover demo exit and observable reader outcomes instead of stored settings only.
+Checkout remains unavailable until the factory completes Code Echo product
+registration in the Sociobot billing system. The site and extension show no
+purchase action; the core local reader remains available. This external
+dependency is the only remaining release constraint.
